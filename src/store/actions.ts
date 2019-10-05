@@ -1,7 +1,7 @@
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from "redux-thunk";
 
-import { Profile } from "../models/Profile";
+import Profile from "../models/Profile";
 
 export const PROFILE_ACTIONS = {
     fetchProfiles: "[Profiles] Fetch Profiles",
