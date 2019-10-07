@@ -11,7 +11,7 @@ const Table: FC<TableProps<{}>> = (props) => {
     return <table>
         <thead>
             <tr>
-                {props.columns.map(column => <th key={column.name} onClick={column.isSortable && props.clicked ? (e) => props.clicked(column.name) : undefined}>
+                {props.columns.map(column => <th key={column.name} onClick={column.isSortable && props.clicked ? () => props.clicked(column.name) : undefined}>
                     {column.name}
                 </th>)}
             </tr>

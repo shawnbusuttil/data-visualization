@@ -1,4 +1,7 @@
 export function sort<T>(data: T[], key: string | number = 0, descending = false) {
+    if (key === "date_of_birth") {
+        return sortByDOB<T>(data, key, descending);
+    }
     return data.sort((a: T, b: T) => {
         return descending 
             ? a[key] < b[key] ? 1 : -1

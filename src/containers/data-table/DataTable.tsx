@@ -12,6 +12,8 @@ import withSorting from "../../hoc/withSorting";
 import withPagination from "../../hoc/withPagination";
 
 import { sort, sortByDOB } from "../../utils/sortingFunctions";
+import { searchDataSetBy } from "../../utils/searchFunctions";
+import withSearching from "../../hoc/withSearching";
 
 interface Props {
     data: Profile[],
@@ -23,6 +25,7 @@ interface Props {
 
 class DataTable extends React.Component<Props> {
     state = {
+        searchKey: ["first_name"],
         sortGroups: ["date_of_birth", "salary", "industry"]
     };
 
@@ -42,8 +45,8 @@ class DataTable extends React.Component<Props> {
                 const { sortKey, descending } = this.props.sortingOptions;
 
                 renderedData = sortKey === "date_of_birth" 
-                    ? sortByDOB(this.props.data, sortKey, descending) 
-                    : sort(this.props.data, sortKey, descending);
+                    ? sortByDOB(renderedData, sortKey, descending) 
+                    : sort(renderedData, sortKey, descending);
             }
             
             if (this.props.paginationOptions) {
@@ -76,4 +79,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 export default connect(
     mapStateToProps, 
     mapDispatchToProps
-)(withPagination(withSorting(DataTable)));
+)(
+    withSearching(
+        withSorting(
+            withPagination(DataTable)
+        )
+    )
+);
