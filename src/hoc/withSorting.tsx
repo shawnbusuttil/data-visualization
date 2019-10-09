@@ -1,4 +1,5 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
+
 import { sort } from "../utils/sortingFunctions";
 
 interface SortingProps<T> {
@@ -6,24 +7,31 @@ interface SortingProps<T> {
     sortBy: (sortKey: string) => void
 }
 
-const withSorting = (WrappedComponent: React.ComponentType<any>) => {
+interface SortingOptions {
+    sortingGroups: string[]
+}
+
+const withSorting = (WrappedComponent: React.ComponentType<any>, sortingOptions: SortingOptions) => {
     return class extends React.Component<SortingProps<{}>> {
         state = {
             sortKey: "id",
-            descending: false
+            isDescending: false
         };
 
         sortBy = (sortKey: string) => {
-            if (sortKey === this.state.sortKey) {
-                this.setState({ ...this.state, descending: !this.state.descending });
-                return;
-            }
-            this.setState({ sortKey, descending: false });
+            this.setState({ sortKey });
         }
         
         render() {
             return <Fragment>
-                <WrappedComponent {...this.props} sortingOptions={sort(this.props.data, this.state.sortKey, this.state.descending)} sortBy={this.sortBy} />
+                <span>Sort by: </span>
+                <select className="sortBy" onChange={(e) => this.sortBy(e.target.value)}>
+                    {sortingOptions.sortingGroups.map(grp => <option key={grp} value={grp}>{grp}</option>)}
+                </select>
+                <button onClick={() => this.setState({ isDescending: !this.state.isDescending })}>
+                    { this.state.isDescending ? "Descending" : "Ascending" }
+                </button>
+                <WrappedComponent {...this.props} data={sort(this.props.data, this.state.sortKey, this.state.isDescending)} />
             </Fragment>;
         }
     }

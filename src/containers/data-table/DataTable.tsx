@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 
@@ -9,55 +9,29 @@ import Profile from "../../models/Profile";
 import Table from "../../components/table/Table";
 
 import withSorting from "../../hoc/withSorting";
-import withPagination from "../../hoc/withPagination";
-
-import { sort, sortByDOB } from "../../utils/sortingFunctions";
-import { searchDataSetBy } from "../../utils/searchFunctions";
 import withSearching from "../../hoc/withSearching";
+import withPagination from "../../hoc/withPagination";
 
 interface Props {
     data: Profile[],
-    getProfiles: () => void,
-    sortBy: (key: string) => void,
-    sortingOptions?: { sortKey: string, descending: boolean },
-    paginationOptions?: { currentPage: number, itemsPerPage: number }
+    getProfiles: () => void
+}
+
+const SORTING_OPTIONS = {
+    sortingGroups: ["id", "date_of_birth", "salary", "industry"]
 }
 
 class DataTable extends React.Component<Props> {
-    state = {
-        searchKey: ["first_name"],
-        sortGroups: ["date_of_birth", "salary", "industry"]
-    };
-
     componentDidMount() {
        this.props.getProfiles();
     }
 
     render() {
         if (this.props.data.length) {
-            const keys = Object.keys(this.props.data[0]).map(key => {
-                return { name: key, isSortable: this.state.sortGroups.includes(key) }
-            });
+            const keys = Object.keys(this.props.data[0]);
 
             let renderedData = [...this.props.data];
-
-            if (this.props.sortingOptions) {
-                const { sortKey, descending } = this.props.sortingOptions;
-
-                renderedData = sortKey === "date_of_birth" 
-                    ? sortByDOB(renderedData, sortKey, descending) 
-                    : sort(renderedData, sortKey, descending);
-            }
-            
-            if (this.props.paginationOptions) {
-                const { currentPage, itemsPerPage } = this.props.paginationOptions;
-                const start = (currentPage - 1) * itemsPerPage; 
-                const end = start + itemsPerPage;
-
-                renderedData = renderedData.slice(start, end);
-            }
-            
-            return <Table columns={keys} data={renderedData} clicked={this.props.sortBy} />;
+            return <Table columns={keys} data={renderedData} />;
         }
 
         return <p>No Data</p>;
@@ -76,13 +50,16 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     }
 }
 
+// Using HOCs will make the DataTable more cutomizable, 
+// e.g. in case you need another one which doesn't require pagination/sort/search
 export default connect(
-    mapStateToProps, 
+    mapStateToProps,
     mapDispatchToProps
 )(
     withSearching(
         withSorting(
-            withPagination(DataTable)
-        )
-    )
+            withPagination(DataTable, { currentPage: 1, itemsPerPage: 10 }),
+            SORTING_OPTIONS
+        ),
+    "first_name")
 );

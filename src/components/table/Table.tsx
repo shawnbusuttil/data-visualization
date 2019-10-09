@@ -1,22 +1,22 @@
 import React, { FC } from "react";
-import withPagination from "../../hoc/withPagination";
 
 interface TableProps<T> {
     data: T[];
-    clicked: (key: string) => void;
-    columns: { name: string, isSortable: boolean }[];
+    columns: string[];
 }
 
-const Table: FC<TableProps<{}>> = (props) => {
+const Table: FC<TableProps<any>> = (props) => {
     return <table>
         <thead>
             <tr>
-                {props.columns.map(column => <th key={column.name} onClick={column.isSortable && props.clicked ? () => props.clicked(column.name) : undefined}>
-                    {column.name}
-                </th>)}
+                {props.columns.map(column => <th key={column}>{column}</th>)}
             </tr>
         </thead>
-        <tbody>{props.data.map(val => <tr>{Object.keys(val).map(key => <td>{val[key]}</td>)}</tr>)}</tbody>
+        <tbody>
+        {props.data.map((item, i) => <tr key={i}>
+            {props.columns.map((col, i) => <td key={i}>{item[col]}</td>)}
+        </tr>)}
+        </tbody>
     </table>
 };
 

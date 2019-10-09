@@ -8,6 +8,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 
 import profileReducer from "./store/reducer";
 
+import "./index.css";
 import App from './App';
 
 const appReducer = combineReducers({

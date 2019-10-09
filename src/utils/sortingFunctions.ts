@@ -1,4 +1,4 @@
-export function sort<T>(data: T[], key: string | number = 0, descending = false) {
+export function sort<T>(data: T[], key: string, descending = false) {
     if (key === "date_of_birth") {
         return sortByDOB<T>(data, key, descending);
     }
@@ -9,7 +9,7 @@ export function sort<T>(data: T[], key: string | number = 0, descending = false)
     });
 }
 
-export function sortByDOB<T>(data: T[], key: string, descending = false) {
+function sortByDOB<T>(data: T[], key: string, descending = false) {
     return data.sort((a: T, b: T) => {
         const aDate = a[key].split('/').reverse().join();
         const bDate = b[key].split('/').reverse().join();

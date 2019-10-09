@@ -2,33 +2,35 @@ import React, { Fragment } from "react";
 import { Pagination } from "semantic-ui-react";
 
 interface PaginationProps<T> {
-    data: T[],
-    paginationOptions: {
-        currentPage: number,
-        itemsPerPage: number
-    }
+    data: T[]
 }
 
-const withPagination = (WrappedComponent: React.ComponentType<any>) => {
+interface PaginationOptions {
+    currentPage: number;
+    itemsPerPage: number;
+}
+
+const withPagination = (WrappedComponent: React.ComponentType<any>, paginationOptions: PaginationOptions) => {
     return class extends React.Component<PaginationProps<{}>> {
         state = {
-            currentPage: 1,
-            itemsPerPage: 10
-        };
-
-        constructor(props: PaginationProps<{}>) {
-            super(props);
-            console.log(props);
+            start: 0,
+            end: paginationOptions.itemsPerPage
         }
 
         flipTo = (activePage: number) => {
-            this.setState({ currentPage: activePage });
+            const start = (activePage - 1) * paginationOptions.itemsPerPage;
+            const end = start + paginationOptions.itemsPerPage;
+            this.setState({ start, end });
+        }
+
+        getPartition = () => {
+            return this.props.data.slice(this.state.start, this.state.end);
         }
         
         render() {
             return <Fragment>
-                <WrappedComponent {...this.props} paginationOptions={this.state} />
-                <Pagination totalPages={Math.ceil(this.props.data.length / this.state.itemsPerPage)} siblingRange={2} onPageChange={(_e, {activePage = 0}) => this.flipTo(+activePage)} />
+                <WrappedComponent {...this.props} data={this.getPartition()} />
+                {this.props.data.length ? <Pagination totalPages={Math.ceil(this.props.data.length / paginationOptions.itemsPerPage).toString()} siblingRange={"2"} defaultActivePage={1} onPageChange={(_e, {activePage = 0}) => this.flipTo(+activePage)} /> : null}
             </Fragment>;
         }
     }

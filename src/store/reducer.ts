@@ -5,7 +5,7 @@ const INITIAL_STATE: ProfileState = {
     profiles: []
 }
 
-const reducer = (state = INITIAL_STATE, action: { type: string, payload: any }): ProfileState => {
+const reducer = (state = INITIAL_STATE, action: { type: string, payload?: any }): ProfileState => {
     switch (action.type) {
         case PROFILE_ACTIONS.fetchProfilesSuccess: {
             return {
